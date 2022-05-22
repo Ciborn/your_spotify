@@ -7,6 +7,7 @@ import {
   getMostListenedSongs,
   getMostListenedArtist,
   getTimePer,
+  getUserTimePer,
   albumDateRatio,
   featRatio,
   popularityPer,
@@ -19,6 +20,7 @@ import {
   getBestSongsOfHour,
   getBestAlbumsOfHour,
   getBestArtistsOfHour,
+  getBestUsersOfHour
 } from '../database';
 import {
   CollaborativeMode,
@@ -182,6 +184,24 @@ router.get(
 
     try {
       const result = await getTimePer(user, start, end, timeSplit);
+      return res.status(200).send(result);
+    } catch (e) {
+      logger.error(e);
+      return res.status(500).end();
+    }
+  },
+);
+
+router.get(
+  '/user_time_per',
+  validating(intervalPerSchema, 'query'),
+  isLoggedOrGuest,
+  async (req, res) => {
+    const { user } = req as LoggedRequest;
+    const { start, end, timeSplit } = req.query as TypedPayload<typeof intervalPerSchema>;
+
+    try {
+      const result = await getUserTimePer(user, start, end, timeSplit);
       return res.status(200).send(result);
     } catch (e) {
       logger.error(e);
@@ -484,6 +504,24 @@ router.get(
 
     try {
       const result = await getBestArtistsOfHour(user, start, end);
+      return res.status(200).send(result);
+    } catch (e) {
+      logger.error(e);
+      return res.status(500).end();
+    }
+  },
+);
+
+router.get(
+  '/top/hour-repartition/users',
+  validating(interval, 'query'),
+  isLoggedOrGuest,
+  async (req, res) => {
+    const { user } = req as LoggedRequest;
+    const { start, end } = req.query as TypedPayload<typeof collaborativeSchema>;
+
+    try {
+      const result = await getBestUsersOfHour(user, start, end);
       return res.status(200).send(result);
     } catch (e) {
       logger.error(e);

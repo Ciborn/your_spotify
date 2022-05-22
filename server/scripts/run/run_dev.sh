@@ -1,3 +1,3 @@
 #!/bin/sh
 
-yarn build && yarn migrate && yarn dev
+yarn build:watch && yarn migrate && yarn dev

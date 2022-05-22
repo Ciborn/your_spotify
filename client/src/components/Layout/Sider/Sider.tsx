@@ -79,6 +79,12 @@ const links = [
         icon: <MusicNoteOutlined />,
         iconOn: <MusicNote />,
       },
+      {
+        label: 'Miscellaneous',
+        link: '/misc',
+        icon: <BarChartOutlined />,
+        iconOn: <BarChart />,
+      }
     ],
   },
   {
@@ -103,7 +109,7 @@ const links = [
         iconOn: <ExitToApp />,
       },
     ],
-  },
+  }
 ];
 
 export default function Sider({ className }: SiderProps) {

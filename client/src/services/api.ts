@@ -185,6 +185,12 @@ export const api = {
       end,
       timeSplit,
     }),
+  userTimePer: (start: Date, end: Date, timeSplit: Timesplit) =>
+    get<{ _id: DateId | undefined; users: User[]; counts: number[] }[]>('/spotify/user_time_per', {
+      start,
+      end,
+      timeSplit,
+    }),
   timePer: (start: Date, end: Date, timeSplit: Timesplit) =>
     get<{ count: number; _id: DateId | null }[]>('/spotify/time_per', {
       start,
@@ -382,6 +388,11 @@ export const api = {
   getBestArtistsOfHour: (start: Date, end: Date) =>
     get<{ _id: number; total: number; artists: { count: number; artist: Artist }[] }[]>(
       '/spotify/top/hour-repartition/artists',
+      { start, end },
+    ),
+  getBestUsersOfHour: (start: Date, end: Date) =>
+    get<{ _id: number; total: number; users: { count: number; user: User }[] }[]>(
+      '/spotify/top/hour-repartition/users',
       { start, end },
     ),
 };

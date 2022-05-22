@@ -27,6 +27,7 @@ import RegistrationsDisabled from './scenes/RegistrationsDisabled';
 import Affinity from './scenes/Collaborative/Affinity';
 import { useTheme } from './services/theme';
 import { selectDarkMode } from './services/redux/modules/user/selector';
+import Miscellaneous from './scenes/Collaborative/Miscellaneous';
 
 function App() {
   const dark = useSelector(selectDarkMode);
@@ -119,6 +120,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <CollaborativeArtists />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/misc"
+                element={
+                  <PrivateRoute>
+                    <Miscellaneous />
                   </PrivateRoute>
                 }
               />

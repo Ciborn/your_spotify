@@ -1,0 +1,8 @@
+.content {
+  padding: var(--page-padding);
+  height: 500px;
+}
+  
+.chart {
+  height: 300px;
+}

@@ -286,6 +286,7 @@ export const formatXAxisDateTooltip = <D extends { dateWithPrecision: DateWithPr
   payload: D,
 ) => formatDateWithPrecisionToString(payload.dateWithPrecision);
 
+export const msToHours = (ms: number) => Math.floor(ms / 3600000);
 export const msToMinutes = (ms: number) => Math.floor(ms / 1000 / 60);
 export const msToMinutesAndSeconds = (ms: number) =>
   `${msToMinutes(ms)}:${pad(Math.floor((ms - msToMinutes(ms) * 1000 * 60) / 1000))}`;

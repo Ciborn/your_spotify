@@ -185,6 +185,18 @@ export const api = {
       end,
       timeSplit,
     }),
+  instanceSongsPer: (start: Date, end: Date, timeSplit: Timesplit) =>
+    get<{ count: number; _id: DateId | null; differents: number }[]>('/spotify/instance_songs_per', {
+      start,
+      end,
+      timeSplit,
+    }),
+  instanceTimePer: (start: Date, end: Date, timeSplit: Timesplit) =>
+    get<{ count: number; _id: DateId | null }[]>('/spotify/instance_time_per', {
+      start,
+      end,
+      timeSplit,
+    }),
   userTimePer: (start: Date, end: Date, timeSplit: Timesplit) =>
     get<{ _id: DateId | undefined; users: User[]; counts: number[] }[]>('/spotify/user_time_per', {
       start,
@@ -249,6 +261,19 @@ export const api = {
         _id: DateId | null;
       }[]
     >('/spotify/different_artists_per', {
+      start,
+      end,
+      timeSplit,
+    }),
+  instanceDifferentArtistsPer: (start: Date, end: Date, timeSplit: Timesplit) =>
+    get<
+      {
+        artists: Artist[];
+        counts: number[];
+        differents: number;
+        _id: DateId | null;
+      }[]
+    >('/spotify/instance_different_artists_per', {
       start,
       end,
       timeSplit,

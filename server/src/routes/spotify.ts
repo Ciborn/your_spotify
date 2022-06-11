@@ -4,14 +4,17 @@ import {
   getTrackBySpotifyId,
   getSongs,
   getSongsPer,
+  getInstanceSongsPer,
   getMostListenedSongs,
   getMostListenedArtist,
   getTimePer,
+  getInstanceTimePer,
   getUserTimePer,
   albumDateRatio,
   featRatio,
   popularityPer,
   differentArtistsPer,
+  instanceDifferentArtistsPer,
   getDayRepartition,
   getBestArtistsPer,
   getBestSongsNbOffseted,
@@ -175,6 +178,24 @@ router.get(
 );
 
 router.get(
+  '/instance_songs_per',
+  validating(intervalPerSchema, 'query'),
+  isLoggedOrGuest,
+  async (req, res) => {
+    const { user } = req as LoggedRequest;
+    const { start, end, timeSplit } = req.query as TypedPayload<typeof intervalPerSchema>;
+
+    try {
+      const result = await getInstanceSongsPer(user, start, end, timeSplit);
+      return res.status(200).send(result);
+    } catch (e) {
+      logger.error(e);
+      return res.status(500).end();
+    }
+  },
+);
+
+router.get(
   '/time_per',
   validating(intervalPerSchema, 'query'),
   isLoggedOrGuest,
@@ -184,6 +205,24 @@ router.get(
 
     try {
       const result = await getTimePer(user, start, end, timeSplit);
+      return res.status(200).send(result);
+    } catch (e) {
+      logger.error(e);
+      return res.status(500).end();
+    }
+  },
+);
+
+router.get(
+  '/instance_time_per',
+  validating(intervalPerSchema, 'query'),
+  isLoggedOrGuest,
+  async (req, res) => {
+    const { user } = req as LoggedRequest;
+    const { start, end, timeSplit } = req.query as TypedPayload<typeof intervalPerSchema>;
+
+    try {
+      const result = await getInstanceTimePer(user, start, end, timeSplit);
       return res.status(200).send(result);
     } catch (e) {
       logger.error(e);
@@ -274,6 +313,24 @@ router.get(
 
     try {
       const result = await differentArtistsPer(user, start, end, timeSplit);
+      return res.status(200).send(result);
+    } catch (e) {
+      logger.error(e);
+      return res.status(500).end();
+    }
+  },
+);
+
+router.get(
+  '/instance_different_artists_per',
+  validating(intervalPerSchema, 'query'),
+  isLoggedOrGuest,
+  async (req, res) => {
+    const { user } = req as LoggedRequest;
+    const { start, end, timeSplit } = req.query as TypedPayload<typeof intervalPerSchema>;
+
+    try {
+      const result = await instanceDifferentArtistsPer(user, start, end, timeSplit);
       return res.status(200).send(result);
     } catch (e) {
       logger.error(e);

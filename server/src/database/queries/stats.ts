@@ -280,36 +280,21 @@ export const getUserTimePer = async (
         count: { $sum: "$track.duration_ms" },
       },
     },
-    { $sort: { count: -1, '_id.user': 1 } },
-    {
-      $group: {
-        _id: getGroupingByTimeSplit(timeSplit, '_id'),
-        users: { $push: '$_id.user' },
-        counts: { $push: '$count' },
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        users: { $slice: ['$users', user.settings.nbElements] },
-        counts: { $slice: ['$counts', user.settings.nbElements] },
-      },
-    },
-    { $unwind: { path: '$users', includeArrayIndex: 'userIdx' } },
     {
       $lookup: {
         from: 'users',
-        localField: 'users',
+        localField: '_id.user',
         foreignField: '_id',
         as: 'users',
       },
     },
     { $unwind: '$users' },
+    { $sort: { count: -1 } },
     {
       $group: {
         _id: getGroupingByTimeSplit(timeSplit, '_id'),
-        users: { $push: { id: '$users._id', username: '$users.username' } },
-        counts: { $push: { $arrayElemAt: ['$counts', '$userIdx'] } },
+        users: { $push: { id: "$users._id", username: "$users.username" } },
+        counts: { $push: '$count' },
       },
     },
     ...sortByTimeSplit(timeSplit, '_id'),
@@ -986,52 +971,31 @@ export const getBestUsersOfHour = (user: User, start: Date, end: Date) => {
     { $addFields: { hour: getGroupByDateProjection().hour } },
     { $group: { 
       _id: { hour: '$hour', user: '$owner' },
-      songs: { $push: '$id' },
-      total: { $sum: 1 }
+      songs: { $push: '$id' }
     } },
     { $unwind: '$songs' },
     { $lookup: lightTrackLookupPipeline('songs') },
     { $unwind: '$track' },
     {
       $group: {
-        _id: { _id: '$_id', user: '$user' },
-        count: { $sum: '$track.duration_ms' },
-
-        total: { $sum: '$track.duration_ms' },
-      },
+        _id: { _id: '$_id' },
+        count: { $sum: "$track.duration_ms" }
+      }
     },
-    {
-      $group: {
-        _id: '$_id._id.hour',
-        users: { $push: { user: '$_id._id.user', count: '$count' } },
-        total: { $sum: '$total' },
-      },
-    },
+    { $sort: { count: -1 } },
     { $lookup: {
       from: "users",
-      localField: "users.user",
+      localField: "_id._id.user",
       foreignField: "_id",
       as: "user"
     } },
-    { $unwind: { path: "$users", includeArrayIndex: "countIdx" } },
-    { $unwind: { path: "$user", includeArrayIndex: "userIdx" } },
-    {
-      $project: {
-        _id: 1,
-        users: 1,
-        user: 1,
-        total: 1,
-        valid: { $eq: ["$countIdx", "$userIdx"] }
-      }
-    },
-    { $match: { valid: true } },
+    { $unwind: { path: "$user" } },
     {
       $group: {
-        _id: '$_id',
-        users: { $push: { user: { id: "$user._id", username: "$user.username" }, count: '$users.count' } },
-        total: { $first: '$total' },
+        _id: '$_id._id.hour',
+        users: { $push: { user: { id: '$user._id', username: "$user.username" }, count: '$count' } },
+        total: { $sum: '$count' },
       },
-    },
-    { $sort: { _id: 1 } },
+    }
   ]);
 };
